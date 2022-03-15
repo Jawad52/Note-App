@@ -1,4 +1,4 @@
-package com.jawad.noteapp
+package com.jawad.noteapp.feature_note.presentation
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
