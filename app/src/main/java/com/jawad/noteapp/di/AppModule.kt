@@ -6,6 +6,7 @@ import com.jawad.noteapp.feature_note.data.local.NoteDao
 import com.jawad.noteapp.feature_note.data.local.NoteDatabase
 import com.jawad.noteapp.feature_note.data.repository.NoteRepositoryImpl
 import com.jawad.noteapp.feature_note.domain.repository.NoteRepository
+import com.jawad.noteapp.feature_note.domain.use_case.AddNoteUseCase
 import com.jawad.noteapp.feature_note.domain.use_case.DeleteNoteUseCase
 import com.jawad.noteapp.feature_note.domain.use_case.GetNoteUseCase
 import com.jawad.noteapp.feature_note.domain.use_case.NoteUseCase
@@ -39,7 +40,8 @@ object AppModule {
     fun providesUseCase(noteRepository: NoteRepository): NoteUseCase {
         return NoteUseCase(
             getNoteUseCase = GetNoteUseCase(noteRepository),
-            deleteNoteUseCase = DeleteNoteUseCase(noteRepository)
+            deleteNoteUseCase = DeleteNoteUseCase(noteRepository),
+            addNoteUseCase = AddNoteUseCase(noteRepository)
         )
     }
 }
