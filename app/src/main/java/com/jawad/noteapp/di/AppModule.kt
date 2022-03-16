@@ -31,8 +31,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesNotesRepository(noteDao: NoteDao): NoteRepository {
-        return NoteRepositoryImpl(noteDao)
+    fun providesNotesRepository(noteDao: NoteDatabase): NoteRepository {
+        return NoteRepositoryImpl(noteDao.getNoteDao)
     }
 
     @Provides
