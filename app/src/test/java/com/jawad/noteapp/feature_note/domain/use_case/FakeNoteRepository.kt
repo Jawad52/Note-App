@@ -16,6 +16,7 @@ class FakeNoteRepository : NoteRepository {
     }
 
     override suspend fun insertNote(note: Note) {
+        Common.notes.add(note)
     }
 
     override suspend fun deleteNote(note: Note) {
