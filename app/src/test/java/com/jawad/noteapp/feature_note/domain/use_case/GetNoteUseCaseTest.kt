@@ -44,7 +44,7 @@ class GetNoteUseCaseTest {
 
     @Test
     fun `Verify note list is in ascending order by title`() = runTest(testDispatcher) {
-        val noteOrder = NoteOrder.Title(OrderType.AscendingOrderType)
+        val noteOrder = NoteOrder.Title(OrderType.Ascending)
         getNoteUseCase(noteOrder).test {
             val result = awaitItem()
             assertThat(result).isNotEmpty()
@@ -55,7 +55,7 @@ class GetNoteUseCaseTest {
 
     @Test
     fun `Verify note list is in descending order by title`() = runTest(testDispatcher) {
-        val noteOrder = NoteOrder.Title(OrderType.DescendingOrderType)
+        val noteOrder = NoteOrder.Title(OrderType.Descending)
         getNoteUseCase(noteOrder).test {
             val result = awaitItem()
             assertThat(result).isNotEmpty()
@@ -66,7 +66,7 @@ class GetNoteUseCaseTest {
 
     @Test
     fun `Verify if notes list are ordered by color`() = runTest(testDispatcher) {
-        val noteOrder = NoteOrder.Color(OrderType.AscendingOrderType)
+        val noteOrder = NoteOrder.Color(OrderType.Ascending)
         getNoteUseCase(noteOrder).test {
             val result = awaitItem()
             assertThat(result).isNotEmpty()
@@ -77,7 +77,7 @@ class GetNoteUseCaseTest {
 
     @Test
     fun `Verify if notes list are ordered by date`() = runTest(testDispatcher) {
-        val noteOrder = NoteOrder.Date(OrderType.AscendingOrderType)
+        val noteOrder = NoteOrder.Date(OrderType.Ascending)
         getNoteUseCase(noteOrder).test {
             val result = awaitItem()
             assertThat(result).isNotEmpty()

@@ -10,17 +10,17 @@ import javax.inject.Inject
 
 class GetNoteUseCase @Inject constructor(private val repository: NoteRepository) {
 
-    operator fun invoke(noteOrder: NoteOrder = NoteOrder.Title(OrderType.AscendingOrderType)): Flow<List<Note>> {
+    operator fun invoke(noteOrder: NoteOrder = NoteOrder.Title(OrderType.Ascending)): Flow<List<Note>> {
         return repository.getAllNotes().map { notes ->
             when (noteOrder.orderType) {
-                is OrderType.AscendingOrderType -> {
+                is OrderType.Ascending -> {
                     when (noteOrder) {
                         is NoteOrder.Title -> notes.sortedBy { it.title.lowercase() }
                         is NoteOrder.Date -> notes.sortedBy { it.timestamp }
                         is NoteOrder.Color -> notes.sortedBy { it.color }
                     }
                 }
-                is OrderType.DescendingOrderType -> {
+                is OrderType.Descending -> {
                     when (noteOrder) {
                         is NoteOrder.Title -> notes.sortedByDescending { it.title.lowercase() }
                         is NoteOrder.Date -> notes.sortedByDescending { it.timestamp }
