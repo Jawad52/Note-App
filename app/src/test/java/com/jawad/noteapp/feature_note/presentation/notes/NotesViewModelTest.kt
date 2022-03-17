@@ -7,12 +7,13 @@ import com.jawad.noteapp.feature_note.domain.use_case.AddNoteUseCase
 import com.jawad.noteapp.feature_note.domain.use_case.DeleteNoteUseCase
 import com.jawad.noteapp.feature_note.domain.use_case.GetNoteUseCase
 import com.jawad.noteapp.feature_note.domain.use_case.NoteUseCase
+import com.jawad.noteapp.feature_note.domain.util.NoteOrder
+import com.jawad.noteapp.feature_note.domain.util.OrderType
 import com.jawad.noteapp.util.Common
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -56,7 +57,7 @@ class NotesViewModelTest {
         }
 
     @Test
-    fun `Should return note list when the view model is initiate`() =
+    fun `Verify all the state is non-null`() =
         runTest(testCoroutineDispatcher) {
             val getNoteUseCase = mock<GetNoteUseCase>()
             whenever(getNoteUseCase(any())) doReturn flow { emit(Common.notes) }
@@ -67,23 +68,47 @@ class NotesViewModelTest {
                 awaitItem()
                 val result = awaitItem()
                 assertThat(result).isNotNull()
-                assertThat(result.notes).isNotEmpty()
+                assertThat(result.notes).isNotNull()
+                assertThat(result.noteOrder).isNotNull()
+                assertThat(result.isOrderSectionIsVisible).isNotNull()
             }
         }
 
     @Test
-    fun `Verify if the ToggleOrder inverse's the value when on onEvent is called for ToggleOrderSection event`() =
+    fun `Verify the if the ToggleOrderSection event for inverts when user NoteEvent_ToggleOrderSection invoked`() =
         runTest(testCoroutineDispatcher) {
             val noteUseCase = NoteUseCase(getNotesUseCase, deleteNoteUseCase, addNoteUseCase)
             val notesViewModel = NotesViewModel(noteUseCase)
 
-            val initialToggleOrder = notesViewModel.noteState.value.isOrderSectionIsVisible
-            notesViewModel.onEvent(NoteEvent.ToggleOrderSection)
 
             notesViewModel.noteState.test {
-                val result = awaitItem()
-                assertThat(result).isNotNull()
-                assertThat(result.isOrderSectionIsVisible).isNotEqualTo(initialToggleOrder)
+                val initialResult = awaitItem()
+                assertThat(initialResult.isOrderSectionIsVisible).isFalse()
+
+                notesViewModel.onEvent(NoteEvent.ToggleOrderSection)
+                val finalResult = awaitItem()
+                assertThat(finalResult.isOrderSectionIsVisible).isTrue()
+            }
+        }
+
+    @Test
+    fun `Should sort in descending order when the order event is changed to Descending order`() =
+        runTest(testCoroutineDispatcher) {
+            val getNoteUseCase = mock<GetNoteUseCase>()
+            whenever(getNoteUseCase(any())) doReturn flow { emit(Common.notes) }
+
+            val noteUseCase = NoteUseCase(getNoteUseCase, deleteNoteUseCase, addNoteUseCase)
+            val notesViewModel = NotesViewModel(noteUseCase)
+
+            notesViewModel.noteState.test {
+                val initialResult = awaitItem()
+                assertThat(initialResult.noteOrder.orderType == OrderType.Ascending).isTrue()
+                assertThat(initialResult.noteOrder.orderType == OrderType.Descending).isFalse()
+
+                notesViewModel.onEvent(NoteEvent.OrderNote(NoteOrder.Title(OrderType.Descending)))
+                val finalResult = awaitItem()
+                assertThat(finalResult.noteOrder.orderType == OrderType.Ascending).isFalse()
+                assertThat(finalResult.noteOrder.orderType == OrderType.Descending).isTrue()
             }
         }
 

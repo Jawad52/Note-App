@@ -58,9 +58,6 @@ class NotesViewModel @Inject constructor(private val noteUseCase: NoteUseCase) :
                 ) {
                     return
                 }
-                viewModelScope.launch {
-                    noteUseCase.getNoteUseCase(noteEvent.noteOrder)
-                }
                 getNotes(noteEvent.noteOrder)
             }
             is NoteEvent.RestoreNote -> {
