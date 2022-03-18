@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jawad.noteapp.feature_note.domain.model.InvalidNoteException
 import com.jawad.noteapp.feature_note.domain.model.Note
-import com.jawad.noteapp.feature_note.domain.repository.NoteRepository
+import com.jawad.noteapp.feature_note.domain.use_case.NoteUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -17,14 +17,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddEditNoteViewModel @Inject constructor(
-    private val noteRepository: NoteRepository,
+    private val noteUseCase: NoteUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     private var _titleTextFieldState = mutableStateOf(NoteTextFieldState(hint = "Enter title"))
-    private var getTitleTextFieldState: State<NoteTextFieldState> = _titleTextFieldState
+    var getTitleTextFieldState: State<NoteTextFieldState> = _titleTextFieldState
 
     private var _contentTextFieldState = mutableStateOf(NoteTextFieldState(hint = "Enter content"))
-    private var getContentTextFieldState: State<NoteTextFieldState> = _contentTextFieldState
+    var getContentTextFieldState: State<NoteTextFieldState> = _contentTextFieldState
 
     private val _noteColor = mutableStateOf(Note.noteColor.random().toArgb())
     val noteColor: State<Int> = _noteColor
@@ -38,7 +38,7 @@ class AddEditNoteViewModel @Inject constructor(
         savedStateHandle.get<Int>("noteId")?.let { noteId ->
             if (noteId != -1) {
                 viewModelScope.launch {
-                    noteRepository.getNoteById(noteId)?.let { note ->
+                    noteUseCase.getNoteByIdUseCase(noteId)?.let { note ->
                         currentNoteId = noteId
                         _titleTextFieldState.value = getTitleTextFieldState.value.copy(
                             text = note.title,
@@ -85,7 +85,7 @@ class AddEditNoteViewModel @Inject constructor(
             is AddEditNoteEvent.SaveNote -> {
                 viewModelScope.launch {
                     try {
-                        noteRepository.insertNote(
+                        noteUseCase.addNoteUseCase(
                             Note(
                                 title = getTitleTextFieldState.value.text,
                                 content = getContentTextFieldState.value.text,
