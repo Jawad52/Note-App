@@ -12,7 +12,7 @@ class FakeNoteRepository : NoteRepository {
     }
 
     override suspend fun getNoteById(id: Int): Note? {
-        return Common.notes.maxByOrNull { it.id == id }
+        return Common.notes.find { it.id == id }
     }
 
     override suspend fun insertNote(note: Note) {
