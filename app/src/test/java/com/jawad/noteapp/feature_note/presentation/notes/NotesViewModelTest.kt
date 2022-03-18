@@ -3,10 +3,7 @@ package com.jawad.noteapp.feature_note.presentation.notes
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import com.jawad.noteapp.feature_note.domain.use_case.AddNoteUseCase
-import com.jawad.noteapp.feature_note.domain.use_case.DeleteNoteUseCase
-import com.jawad.noteapp.feature_note.domain.use_case.GetNoteUseCase
-import com.jawad.noteapp.feature_note.domain.use_case.NoteUseCase
+import com.jawad.noteapp.feature_note.domain.use_case.*
 import com.jawad.noteapp.feature_note.domain.util.NoteOrder
 import com.jawad.noteapp.feature_note.domain.util.OrderType
 import com.jawad.noteapp.util.Common
@@ -40,6 +37,7 @@ class NotesViewModelTest {
     private val getNotesUseCase = mock<GetNoteUseCase>()
     private val deleteNoteUseCase = mock<DeleteNoteUseCase>()
     private val addNoteUseCase = mock<AddNoteUseCase>()
+    private val getNoteByIdUseCase = mock<GetNoteByIdUseCase>()
 
     @Before
     fun setUp() {
@@ -49,7 +47,7 @@ class NotesViewModelTest {
     @Test
     fun `Verify the note state is not null when the note view model is initiate`() =
         runTest(testCoroutineDispatcher) {
-            val noteUseCase = NoteUseCase(getNotesUseCase, deleteNoteUseCase, addNoteUseCase)
+            val noteUseCase = NoteUseCase(getNotesUseCase, deleteNoteUseCase, addNoteUseCase, getNoteByIdUseCase)
             val notesViewModel = NotesViewModel(noteUseCase)
 
             assertThat(notesViewModel.noteState.value).isNotNull()
@@ -61,7 +59,7 @@ class NotesViewModelTest {
             val getNoteUseCase = mock<GetNoteUseCase>()
             whenever(getNoteUseCase(any())) doReturn flow { emit(Common.notes) }
 
-            val noteUseCase = NoteUseCase(getNoteUseCase, deleteNoteUseCase, addNoteUseCase)
+            val noteUseCase = NoteUseCase(getNoteUseCase, deleteNoteUseCase, addNoteUseCase, getNoteByIdUseCase)
             val notesViewModel = NotesViewModel(noteUseCase)
             val result = notesViewModel.noteState.value
             assertThat(result).isNotNull()
@@ -73,7 +71,7 @@ class NotesViewModelTest {
     @Test
     fun `Verify the if the ToggleOrderSection event for inverts when user NoteEvent_ToggleOrderSection invoked`() =
         runTest(testCoroutineDispatcher) {
-            val noteUseCase = NoteUseCase(getNotesUseCase, deleteNoteUseCase, addNoteUseCase)
+            val noteUseCase = NoteUseCase(getNotesUseCase, deleteNoteUseCase, addNoteUseCase, getNoteByIdUseCase)
             val notesViewModel = NotesViewModel(noteUseCase)
 
             notesViewModel.onEvent(NoteEvent.ToggleOrderSection)
@@ -87,7 +85,7 @@ class NotesViewModelTest {
             val getNoteUseCase = mock<GetNoteUseCase>()
             whenever(getNoteUseCase(any())) doReturn flow { emit(Common.notes) }
 
-            val noteUseCase = NoteUseCase(getNoteUseCase, deleteNoteUseCase, addNoteUseCase)
+            val noteUseCase = NoteUseCase(getNoteUseCase, deleteNoteUseCase, addNoteUseCase, getNoteByIdUseCase)
             val notesViewModel = NotesViewModel(noteUseCase)
 
             notesViewModel.onEvent(NoteEvent.OrderNote(NoteOrder.Title(OrderType.Descending)))
