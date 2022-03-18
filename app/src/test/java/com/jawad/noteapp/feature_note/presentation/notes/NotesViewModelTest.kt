@@ -13,6 +13,7 @@ import com.jawad.noteapp.util.Common
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -51,9 +52,7 @@ class NotesViewModelTest {
             val noteUseCase = NoteUseCase(getNotesUseCase, deleteNoteUseCase, addNoteUseCase)
             val notesViewModel = NotesViewModel(noteUseCase)
 
-            notesViewModel.noteState.test {
-                assertThat(awaitItem()).isNotNull()
-            }
+            assertThat(notesViewModel.noteState.value).isNotNull()
         }
 
     @Test
@@ -64,14 +63,11 @@ class NotesViewModelTest {
 
             val noteUseCase = NoteUseCase(getNoteUseCase, deleteNoteUseCase, addNoteUseCase)
             val notesViewModel = NotesViewModel(noteUseCase)
-            notesViewModel.noteState.test {
-                awaitItem()
-                val result = awaitItem()
-                assertThat(result).isNotNull()
-                assertThat(result.notes).isNotNull()
-                assertThat(result.noteOrder).isNotNull()
-                assertThat(result.isOrderSectionIsVisible).isNotNull()
-            }
+            val result = notesViewModel.noteState.value
+            assertThat(result).isNotNull()
+            assertThat(result.notes).isNotNull()
+            assertThat(result.noteOrder).isNotNull()
+            assertThat(result.isOrderSectionIsVisible).isNotNull()
         }
 
     @Test
@@ -80,15 +76,9 @@ class NotesViewModelTest {
             val noteUseCase = NoteUseCase(getNotesUseCase, deleteNoteUseCase, addNoteUseCase)
             val notesViewModel = NotesViewModel(noteUseCase)
 
-
-            notesViewModel.noteState.test {
-                val initialResult = awaitItem()
-                assertThat(initialResult.isOrderSectionIsVisible).isFalse()
-
-                notesViewModel.onEvent(NoteEvent.ToggleOrderSection)
-                val finalResult = awaitItem()
-                assertThat(finalResult.isOrderSectionIsVisible).isTrue()
-            }
+            notesViewModel.onEvent(NoteEvent.ToggleOrderSection)
+            val finalResult = notesViewModel.noteState.value
+            assertThat(finalResult.isOrderSectionIsVisible).isTrue()
         }
 
     @Test
@@ -100,16 +90,11 @@ class NotesViewModelTest {
             val noteUseCase = NoteUseCase(getNoteUseCase, deleteNoteUseCase, addNoteUseCase)
             val notesViewModel = NotesViewModel(noteUseCase)
 
-            notesViewModel.noteState.test {
-                val initialResult = awaitItem()
-                assertThat(initialResult.noteOrder.orderType == OrderType.Ascending).isTrue()
-                assertThat(initialResult.noteOrder.orderType == OrderType.Descending).isFalse()
-
-                notesViewModel.onEvent(NoteEvent.OrderNote(NoteOrder.Title(OrderType.Descending)))
-                val finalResult = awaitItem()
-                assertThat(finalResult.noteOrder.orderType == OrderType.Ascending).isFalse()
-                assertThat(finalResult.noteOrder.orderType == OrderType.Descending).isTrue()
-            }
+            notesViewModel.onEvent(NoteEvent.OrderNote(NoteOrder.Title(OrderType.Descending)))
+            delay(100)
+            val finalResult = notesViewModel.noteState.value
+            assertThat(finalResult.noteOrder.orderType == OrderType.Ascending).isFalse()
+            assertThat(finalResult.noteOrder.orderType == OrderType.Descending).isTrue()
         }
 
     @After
