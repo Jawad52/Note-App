@@ -33,7 +33,7 @@ fun AddEditNoteScreen(
     noteColor: Int,
     viewMode: AddEditNoteViewModel = hiltViewModel()
 ) {
-    val titleState = viewMode.getContentTextFieldState.value
+    val titleState = viewMode.getTitleTextFieldState.value
     val contentState = viewMode.getContentTextFieldState.value
 
     val scaffoldState = rememberScaffoldState()

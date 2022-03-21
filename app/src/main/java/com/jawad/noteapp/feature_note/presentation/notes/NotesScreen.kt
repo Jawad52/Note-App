@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Sort
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -15,19 +16,34 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.jawad.noteapp.feature_note.presentation.notes.components.NoteItem
 import com.jawad.noteapp.feature_note.presentation.notes.components.OrderSection
+import com.jawad.noteapp.feature_note.presentation.util.Screens
 import kotlinx.coroutines.launch
 
 @Composable
 fun NotesScreen(
+    navController: NavController,
     viewModel: NotesViewModel = hiltViewModel()
 ) {
     val state = viewModel.noteState.value
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
 
-    Scaffold(scaffoldState = scaffoldState) {
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    navController.navigate(Screens.AddEditNoteScreen.route)
+                },
+                backgroundColor = MaterialTheme.colors.primary
+            ) {
+                Icon(imageVector = Icons.Default.Add, contentDescription = "Add note")
+            }
+        },
+        scaffoldState = scaffoldState
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -65,7 +81,10 @@ fun NotesScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-
+                                navController.navigate(
+                                    Screens.AddEditNoteScreen.route +
+                                            "?noteId=${note.id}&noteColor=${note.color}"
+                                )
                             },
                         onDeleteClick = {
                             viewModel.onEvent(NoteEvent.DeleteNote(note))
