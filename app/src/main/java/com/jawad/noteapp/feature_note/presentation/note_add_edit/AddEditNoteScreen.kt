@@ -7,9 +7,10 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -58,7 +59,17 @@ fun AddEditNoteScreen(
     }
 
     Scaffold(
-        scaffoldState = scaffoldState
+        scaffoldState = scaffoldState,
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    viewMode.onEvent(AddEditNoteEvent.SaveNote)
+                },
+                backgroundColor = MaterialTheme.colors.primary
+            ) {
+                Icon(imageVector =  Icons.Default.Save, contentDescription = "save note")
+            }
+        }
     ) {
         Column(
             modifier = Modifier
@@ -76,7 +87,7 @@ fun AddEditNoteScreen(
                     val colorInt = color.toArgb()
                     Box(
                         modifier = Modifier
-                            .size(60.dp)
+                            .size(40.dp)
                             .shadow(15.dp, CircleShape)
                             .clip(CircleShape)
                             .background(color)
@@ -90,7 +101,7 @@ fun AddEditNoteScreen(
                                     noteBackgroundAnimatable.animateTo(
                                         targetValue = Color(colorInt),
                                         animationSpec = tween(
-                                            delayMillis = 500
+                                            delayMillis = 300
                                         )
                                     )
                                 }

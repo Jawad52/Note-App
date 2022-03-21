@@ -14,6 +14,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -42,7 +43,8 @@ fun NotesScreen(
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Add note")
             }
         },
-        scaffoldState = scaffoldState
+        scaffoldState = scaffoldState,
+        backgroundColor = Color.Gray
     ) {
         Column(
             modifier = Modifier
@@ -70,6 +72,7 @@ fun NotesScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp),
+                    noteOrder = viewModel.noteState.value.noteOrder,
                     onOrderChanges = {
                         viewModel.onEvent(NoteEvent.OrderNote(it))
                     })
