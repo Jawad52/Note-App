@@ -59,7 +59,7 @@ class AddEditNoteViewModel @Inject constructor(
         when (event) {
             is AddEditNoteEvent.TitleTextChange -> {
                 _titleTextFieldState.value = getTitleTextFieldState.value.copy(
-                    text = event.text
+                    text = event.text,
                 )
             }
             is AddEditNoteEvent.ContentTextChange -> {

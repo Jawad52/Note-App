@@ -54,7 +54,7 @@ class NotesViewModelTest {
         }
 
     @Test
-    fun `Verify all the state is non-null`() =
+    fun `Verify all the state is non-null when the database return note list`() =
         runTest(testCoroutineDispatcher) {
             val getNoteUseCase = mock<GetNoteUseCase>()
             whenever(getNoteUseCase(any())) doReturn flow { emit(Common.notes) }
